@@ -53,6 +53,22 @@ describe Board do
         expect { board.place(2, '☑') }.to change { board.instance_variable_get(:@board)[4][1] }.to('☑')
       end
     end
+
+    context 'when column is full' do
+      subject(:board) { described_class.new([
+        ['☐','☐','☐','☐','☒','☐','☐'],
+        ['☐','☐','☐','☐','☒','☐','☐'],
+        ['☐','☐','☐','☐','☒','☐','☐'],
+        ['☐','☐','☐','☐','☒','☐','☐'],
+        ['☐','☐','☐','☐','☒','☐','☐'],
+        ['☐','☑','☐','☐','☒','☐','☐'],
+      ]) }
+
+      it 'drops circle to deepest empty spot' do
+        expect(board).to receive(:puts).with("\nInvalid input: That column is full")
+        board.place(5, '☑')
+      end
+    end
   end
 
   describe '#take_input' do
@@ -125,7 +141,7 @@ describe Board do
         end
 
         it 'displays error message' do
-          expect(board).to receive(:puts).with("Invalid Input: Please input a number between 1 and 7")
+          expect(board).to receive(:puts).with("\nInvalid Input: Please input a number between 1 and 7")
           board.take_input
         end
       end
@@ -136,7 +152,7 @@ describe Board do
         end
 
         it 'displays error message' do
-          expect(board).to receive(:puts).with("Invalid Input: Please input a number between 1 and 7")
+          expect(board).to receive(:puts).with("\nInvalid Input: Please input a number between 1 and 7")
           board.take_input
         end
       end
@@ -147,7 +163,7 @@ describe Board do
         end
 
         it 'displays error message' do
-          expect(board).to receive(:puts).with("Invalid Input: Please input a number between 1 and 7")
+          expect(board).to receive(:puts).with("\nInvalid Input: Please input a number between 1 and 7")
           board.take_input
         end
       end
@@ -158,7 +174,7 @@ describe Board do
         end
 
         it 'displays error message' do
-          expect(board).to receive(:puts).with("Invalid Input: Please input a number between 1 and 7")
+          expect(board).to receive(:puts).with("\nInvalid Input: Please input a number between 1 and 7")
           board.take_input
         end
       end
@@ -335,6 +351,21 @@ describe Board do
       it 'displays winner text' do
         expect(board).to receive(:puts).with("\n☒ Connected Four!")
         board.win('☒')
+      end
+    end
+  end
+
+  describe '#is_first_turn?' do
+    context 'when it is the first turn' do
+      it 'returns true' do
+        expect(board.is_first_turn?).to eq(true)
+      end
+    end
+
+    context 'when it is not the first turn' do
+      it 'returns false' do
+        board.advance_turn
+        expect(board.is_first_turn?).to eq(false)
       end
     end
   end

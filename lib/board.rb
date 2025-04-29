@@ -9,9 +9,13 @@ class Board
   ])
     @board = board
     @current_symbol = '☑'
+    @current_turn = 0
   end
 
   def play
+    if is_first_turn?
+      puts "\nEnter a column number between 1 and 7 to get started!"
+    end
     print
     take_input
     until check_for_win
@@ -33,8 +37,12 @@ class Board
   def place(col, symbol)
     col -= 1 # Adjusts to array zero floor
 
-    deepest_empty_spot = 5
+    deepest_empty_spot = nil
     @board.each_with_index { |row, index| deepest_empty_spot = index if row[col] == '☐' }
+
+    return puts "\nInvalid input: That column is full" if deepest_empty_spot == nil
+
+    advance_turn
 
     @board[deepest_empty_spot][col] = symbol
   end
@@ -42,10 +50,10 @@ class Board
   def take_input
     col_input = gets.chomp
 
-    exit if col_input == 'exit' || col_input == 'q'
+    exit if col_input == 'exit' || col_input == 'q' || col_input == 'quit'
 
-    if col_input.to_i.to_s != col_input || col_input.to_i >= 7 || col_input.to_i <= 0
-      puts "Invalid Input: Please input a number between 1 and 7"
+    if col_input.to_i.to_s != col_input || col_input.to_i > 7 || col_input.to_i <= 0
+      puts "\nInvalid Input: Please input a number between 1 and 7"
       return
     end
 
@@ -116,5 +124,13 @@ class Board
     print
     puts symbol == '☑' ? "\n☑ Connected Four!" : "\n☒ Connected Four!"
     exit
+  end
+
+  def is_first_turn?
+    return @current_turn == 0
+  end
+
+  def advance_turn
+    @current_turn += 1
   end
 end
